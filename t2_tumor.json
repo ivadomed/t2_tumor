@@ -1,0 +1,117 @@
+{
+    "command": "train",
+    "gpu": 6,
+    "target_suffix": [
+        "_seg-tumor"
+    ],
+    "roi_suffix": null,
+   
+    "bids_path": "/home/GRAMES.POLYMTL.CA/anlemj/duke/temp/andreanne/tumor_segmentation_masks/results/data",
+    "random_seed": 2116,
+    "contrast_train_validation": [
+        "T2w"
+    ],
+    "contrast_balance": {},
+    "contrast_test": [
+        "T2w"
+    ],
+    "center_test": [],
+    "retrain_model": null,
+    "batch_size": 2,
+    "dropout_rate": 0.3,
+    "batch_norm_momentum": 0.9,
+    "num_epochs": 200,
+    "initial_lr": 0.001,
+    "loss": {
+        "name": "dice"
+    },
+    "dice_params": null,
+    "log_directory": "tumor_segmentation_model",
+    "lr_scheduler": {
+        "name": "CosineAnnealingLR",
+        "base_lr": 1e-05,
+        "max_lr": 0.01
+    },
+    "HeMIS": false,
+    "film_layers": [],
+    "mixup_bool": false,
+    "mixup_alpha": 2,
+    "metadata": "without",
+    "multichannel": false,
+    "missing_modality": false,
+    "out_channel": 1,
+    "depth": 4,
+    "length_3D": [
+        448,
+	256,
+	16
+    ],
+    "n_filters": 16,
+    "padding_3D": 0,
+    "balance_samples": false,
+    "slice_axis": "sagittal",
+    "split_method": "per_patient",
+    "train_fraction": 0.9,
+    "test_fraction": 0.05,
+    "unet_3D": true,
+    "binarize_prediction": true,
+    "attention_unet": false,
+    "uncertainty": {
+        "epistemic": false,
+        "aleatoric": false,
+        "n_it": 10
+    },
+    "slice_filter": {
+        "filter_empty_mask": false,
+        "filter_empty_input": true
+    },
+    "slice_filter_roi": null,
+    "early_stopping_patience": 60,
+    "early_stopping_epsilon": 0.001,
+    "eval_params": {
+        "removeSmall": {
+            "unit": "vox",
+            "thr": 3
+        }
+    },
+    "transformation_training": {
+	    "Resample": {"hspace": 1.0, "wspace":1.0, "dspace":2.0},
+        "CenterCrop": {
+            "size": [
+               448, 256, 16
+            ]
+        },
+        "RandomAffine": {
+            "degrees": 4.6,
+            "translate": [
+                0.03,
+                0.03
+            ]
+        },
+        "NumpyToTensor": {},
+        "NormalizeInstance": {"applied_to": "im"}
+    },
+    "transformation_validation": {
+	    "Resample": {"hspace": 1.0, "wspace":1.0, "dspace":2.0},
+        "CenterCrop": {
+            "size": [
+               448, 256, 16
+            ]
+        },
+        "NumpyToTensor": {},
+        "NormalizeInstance": {"applied_to": "im"}
+    },
+    "transformation_testing": {
+	    "Resample": {"hspace": 1.0, "wspace":1.0, "dspace":2.0},
+        "CenterCrop": {
+            "size": [
+                448,
+                256,
+		16
+            ]
+        },
+        "NumpyToTensor": {},
+        "NormalizeInstance": {"applied_to": "im"}
+    },
+    "debugging": false
+}
