@@ -1,117 +1,106 @@
 {
     "command": "train",
-    "gpu": 6,
-    "target_suffix": [
-        "_seg-tumor"
-    ],
-    "roi_suffix": null,
-   
-    "bids_path": "/home/GRAMES.POLYMTL.CA/anlemj/duke/temp/andreanne/tumor_segmentation_masks/results/data",
-    "random_seed": 2116,
-    "contrast_train_validation": [
-        "T2w"
-    ],
-    "contrast_balance": {},
-    "contrast_test": [
-        "T2w"
-    ],
-    "center_test": [],
-    "retrain_model": null,
-    "batch_size": 2,
-    "dropout_rate": 0.3,
-    "batch_norm_momentum": 0.9,
-    "num_epochs": 200,
-    "initial_lr": 0.001,
-    "loss": {
-        "name": "dice"
+    "gpu": 1,
+    "log_directory": "tumor_segmentation_osfv2",
+    "debugging": true,
+    "object_detection_params": {
+        "object_detection_path": "/home/GRAMES.POLYMTL.CA/anlemj/ivado-medical-imaging/sc_model_30mm_2",
+        "safety_factor": [1.0, 1.0, 1.0]
     },
-    "dice_params": null,
-    "log_directory": "tumor_segmentation_model",
-    "lr_scheduler": {
-        "name": "CosineAnnealingLR",
-        "base_lr": 1e-05,
-        "max_lr": 0.01
+    "loader_parameters": {
+        "bids_path": "/home/GRAMES.POLYMTL.CA/anlemj/duke/temp/andreanne/tumor_segmentation_single_label/data",
+        "target_suffix": ["_seg-tumor"],
+        "roi_params": {
+            "suffix": null,
+            "slice_filter_roi": null
+        },
+        "contrast_params": {
+            "training_validation": ["T2w"],
+            "testing": ["T2w"],
+            "balance": {}
+        },
+        "slice_filter_params": {
+            "filter_empty_mask": false,
+            "filter_empty_input": true
+        },
+        "slice_axis": "sagittal",
+        "multichannel": false
     },
-    "HeMIS": false,
-    "film_layers": [],
-    "mixup_bool": false,
-    "mixup_alpha": 2,
-    "metadata": "without",
-    "multichannel": false,
-    "missing_modality": false,
-    "out_channel": 1,
-    "depth": 4,
-    "length_3D": [
-        448,
-	256,
-	16
-    ],
-    "n_filters": 16,
-    "padding_3D": 0,
-    "balance_samples": false,
-    "slice_axis": "sagittal",
-    "split_method": "per_patient",
-    "train_fraction": 0.9,
-    "test_fraction": 0.05,
-    "unet_3D": true,
-    "binarize_prediction": true,
-    "attention_unet": false,
-    "uncertainty": {
-        "epistemic": false,
-        "aleatoric": false,
-        "n_it": 10
+    "split_dataset": {
+        "fname_split": null,
+        "random_seed": 30,
+        "center_test": [],
+        "method": "per_patient",
+        "train_fraction": 0.85,
+        "test_fraction": 0.05
     },
-    "slice_filter": {
-        "filter_empty_mask": false,
-        "filter_empty_input": true
-    },
-    "slice_filter_roi": null,
-    "early_stopping_patience": 60,
-    "early_stopping_epsilon": 0.001,
-    "eval_params": {
-        "removeSmall": {
-            "unit": "vox",
-            "thr": 3
+    "training_parameters": {
+        "batch_size": 8,
+        "loss": {
+            "name": "DiceLoss"
+        },
+        "training_time": {
+            "num_epochs": 200,
+            "early_stopping_patience": 50,
+            "early_stopping_epsilon": 0.001
+        },
+        "scheduler": {
+            "initial_lr": 0.001,
+            "lr_scheduler": {
+                "name": "CosineAnnealingLR",
+                "base_lr": 1e-5,
+                "max_lr": 1e-2
+            }
+        },
+        "balance_samples": false,
+        "mixup_alpha": null,
+        "transfer_learning": {
+            "retrain_model": null,
+            "retrain_fraction": 1.0
         }
     },
-    "transformation_training": {
-	    "Resample": {"hspace": 1.0, "wspace":1.0, "dspace":2.0},
-        "CenterCrop": {
-            "size": [
-               448, 256, 16
-            ]
+    "default_model": {
+        "name": "Unet",
+        "dropout_rate": 0.3,
+        "bn_momentum": 0.9,
+        "depth": 4
+    },
+    "UNet3D": {
+        "applied": true,
+        "length_3D": [256, 128, 16],
+        "stride_3D": [128, 64, 16],
+        "attention": false,
+        "n_filters": 16
+    },
+    "testing_parameters": {
+        "binarize_prediction": true,
+        "uncertainty": {
+            "epistemic": false,
+            "aleatoric": false,
+            "n_it": 1
+        }
+    },
+    "evaluation_parameters": {
+        "targetSize": {"unit": "vox", "thr": [20, 100]},
+        "removeSmall": {"unit": "vox", "thr": 3},
+        "overlap": {"unit": "vox", "thr": 3}
+    },
+    "transformation": {
+        "Resample":
+        {
+            "wspace": 1,
+            "hspace": 1,
+            "dspace": 2,
+            "preprocessing": true
         },
         "RandomAffine": {
-            "degrees": 4.6,
-            "translate": [
-                0.03,
-                0.03
-            ]
+            "translate": [0.03, 0.03],
+	    "degrees": 5,
+	    "scale": [0.1, 0.1, 0.1],
+            "applied_to": ["im", "gt"],
+            "dataset_type": ["training"]
         },
-        "NumpyToTensor": {},
-        "NormalizeInstance": {"applied_to": "im"}
-    },
-    "transformation_validation": {
-	    "Resample": {"hspace": 1.0, "wspace":1.0, "dspace":2.0},
-        "CenterCrop": {
-            "size": [
-               448, 256, 16
-            ]
-        },
-        "NumpyToTensor": {},
-        "NormalizeInstance": {"applied_to": "im"}
-    },
-    "transformation_testing": {
-	    "Resample": {"hspace": 1.0, "wspace":1.0, "dspace":2.0},
-        "CenterCrop": {
-            "size": [
-                448,
-                256,
-		16
-            ]
-        },
-        "NumpyToTensor": {},
-        "NormalizeInstance": {"applied_to": "im"}
-    },
-    "debugging": false
+      "NumpyToTensor": {},
+      "NormalizeInstance": {"applied_to": ["im"]}
+    }
 }
