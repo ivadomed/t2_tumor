@@ -68,7 +68,7 @@
     "UNet3D": {
         "applied": true,
         "length_3D": [256, 128, 16],
-        "stride_3D": [128, 64, 88888888],
+        "stride_3D": [128, 64, 8],
         "attention": false,
         "n_filters": 16
     },
