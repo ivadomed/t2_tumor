@@ -34,6 +34,11 @@
         "train_fraction": 0.85,
         "test_fraction": 0.05
     },
+    "postprocessing": {
+    	"binarize_prediction": {
+            "thr": 0.5
+        }
+    },
     "training_parameters": {
         "batch_size": 8,
         "loss": {
